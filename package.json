@@ -11,8 +11,22 @@
     "url": "git"
   },
   "keywords": [
-    "teste"
+    "teste",
+    "node",
+    "mongo"
   ],
   "author": "Andrey Lemos",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "bcrypt": "^3.0.5",
+    "cors": "^2.8.5",
+    "express": "^4.16.4",
+    "helmet": "^3.16.0",
+    "jsonwebtoken": "^8.5.1",
+    "mongoose": "^5.4.20"
+  },
+  "devDependencies": {
+    "eslint": "^5.15.3",
+    "mocha": "^6.0.2"
+  }
 }
