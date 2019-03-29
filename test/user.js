@@ -18,7 +18,7 @@ describe("Testes de usuário", function(){
     it("Tentativa de login válida", function(done){
       server
         .post("/user/login")
-        .send({ "email": "meuemail@hotmail.com","senha": "minhasenha2" })
+        .send({ "email": "andrey@hotmail.com","senha": "souandrey" })
         .expect(200) 
         .end(function(err,res){
           res.status.should.equal(200)
@@ -46,7 +46,7 @@ describe("Testes de usuário", function(){
     it("Tentativa de login com senha incorreta", function(done){
       server
         .post("/user/login")
-        .send({ "email": "meuemail@hotmail.com","senha": "minhasenhaerrada" })
+        .send({ "email": "andrey@hotmail.com","senha": "minhasenhaerrada" })
         .expect(401) 
         .end(function(err,res){
           res.status.should.equal(401)
@@ -76,10 +76,10 @@ describe("Testes de usuário", function(){
 
       server
         .post("/user/login")
-        .send({ "email": "meuemail@hotmail.com","senha": "minhasenha2" })
+        .send({ "email": "andrey@hotmail.com","senha": "souandrey" })
         .end(function(errTk,resTk){
           server
-            .get("/user/find?id=48377760-521b-11e9-86dc-952b2963d840")
+            .get("/user/find?id=5bcb9970-5228-11e9-a7e0-b7b00ad9a776")
             .set({"x-access-token": resTk.body.token})
             .expect(200)
             .end(function(err,res){
