@@ -11,21 +11,25 @@ const userService = {
 
     user.findOne({ email: email })
       .then(data => {
-        const usuarioRetorno = data ? data.toObject() : null;
-        if (usuarioRetorno && bcrypt.compareSync(senha, usuarioRetorno.senha)) {
-          // eslint-disable-next-line no-underscore-dangle
-          const token = jwt.sign({ user: usuarioRetorno._id }, process.env.SECRET, {
-            expiresIn: 600,
-          });
-          data.token = token;
-          data.ultimo_login = new Date().toISOString();
-          data.save();
-          returnService.sender(res,200,true,null,null, data);
-        } else {
-          returnService.sendError(res,400,null,{ success: false, erro:"Login Inválido" });
+        if(data){
+          const usuarioRetorno = data ? data.toObject() : null;
+          if (usuarioRetorno && bcrypt.compareSync(senha, usuarioRetorno.senha)) {
+            // eslint-disable-next-line no-underscore-dangle
+            const token = jwt.sign({ user: usuarioRetorno._id }, process.env.SECRET, {
+              expiresIn: 1800,
+            });
+            data.token = token;
+            data.ultimo_login = new Date().toISOString();
+            data.save();
+            returnService.sender(res,200,true,null,null, data);
+          } else {
+            returnService.sendError(res,401,'Usuário e/ou senha inválidos',null);
+          }
+        }else{
+          returnService.sendError(res,404,'Usuário e/ou senha inválidos',null);
         }
       }).catch(erro => {
-        returnService.sendError(res,400,null,erro);
+        returnService.sendError(res,400,'Falha ao realizar login',erro);
       });
   },
 
@@ -34,12 +38,20 @@ const userService = {
   },
 
   getInfo(req, res) {
-    user.findById(req.userId, { dsSenha: 0 })   
-      .then(data => {
-        returnService.sender(res,200,false,null,null,data);
-      }).catch(erro => {
-        returnService.sendError(res,400,null,erro);
-      });
+    if(req.userId){
+      user.findById(req.query.id)   
+        .then(data => {
+          if(data){
+            returnService.sender(res,200,false,null,null,data);
+          }else{
+            returnService.sendError(res,404,'Usuário não encontrado',null);
+          }
+        }).catch(() => {
+          returnService.sendError(res,400,'Falha ao buscar usuário',null);
+        });
+
+    }
+    
   },
   
   add(req, res) {
@@ -53,19 +65,21 @@ const userService = {
     newUser.ultimo_login = '';
     newUser.token = '';
 
-    if (req.body.senha) {
-      newUser.senha = bcrypt.hashSync(req.body.senha, 10);
-
-      newUser.save()
-        .then(x => { 
-          console.log(x);
-          returnService.sender(res,200,true,'','Usuario cadastrado com sucesso', newUser);
-        }).catch(() => {
-          returnService.sendError(res,400,'Falha ao cadastrar o usuario',null);
-        });
-    } else {
-      returnService.sendError(res,401, 'Senha inválida', null);
-    }
+    user.findOne({ email: req.body.email })
+      .then((data) => {
+        if(data){
+          returnService.sendError(res,400,'Email já cadastrado',null);
+        }else{
+          newUser.senha = bcrypt.hashSync(req.body.senha, 10);
+          newUser.save()
+            .then(x => { 
+              console.log(x);
+              returnService.sender(res,200,true,'','Usuario cadastrado com sucesso', newUser);
+            }).catch(() => {
+              returnService.sendError(res,400,'Falha ao cadastrar o usuario',null);
+            });
+        }
+      })
   },
 };
 

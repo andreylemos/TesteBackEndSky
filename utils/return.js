@@ -12,7 +12,7 @@ const returnService = {
   sendError(res, statusResponse, message, json) {
     if(json==null) {
       json = {
-        message: message,
+        mensagem: message,
       };
     }
     res.status(statusResponse).send(json);

@@ -4,12 +4,12 @@ const jwt = require('jsonwebtoken');
 const authentication = {
   checkJWT(req, res, next) {
     var token = req.headers['x-access-token'];
-    if (!token) return res.status(401).send({ auth: false, message: 'Token não informado' });
+    if (!token) return res.status(401).send({ mensagem: 'Não autorizado' });
         
     jwt.verify(token, process.env.SECRET, function(err, decoded) {
-      if (err) return res.status(500).send({ auth: false, message: 'Token inválido' });
+      if (err) return res.status(401).send({ mensagem: 'Não autorizado' });
             
-      req.userId = decoded.id;
+      req.userId = decoded.user;
       next();
     });
   },
