@@ -22,7 +22,7 @@ describe("Testes de usuário", function(){
         .expect(200) 
         .end(function(err,res){
           res.status.should.equal(200)
-          res.body.email.should.equal('meuemail@hotmail.com')
+          res.body.email.should.equal('andrey@hotmail.com')
           res.body.should.have.property('token')
           if (err) return done(err)
           done();
@@ -80,7 +80,7 @@ describe("Testes de usuário", function(){
         .end(function(errTk,resTk){
           server
             .get("/user/find?id=5bcb9970-5228-11e9-a7e0-b7b00ad9a776")
-            .set({"x-access-token": resTk.body.token})
+            .set({"Bearer": resTk.body.token})
             .expect(200)
             .end(function(err,res){
               res.status.should.equal(200)
@@ -97,7 +97,7 @@ describe("Testes de usuário", function(){
     it("Tentativa inváliida de obtenção de dados de usuário", function(done){
       server
         .post("/user/login")
-        .set({"x-access-token": "esteNaoeUmTokenValido"})
+        .set({"Bearer": "esteNaoeUmTokenValido"})
         .expect(404)
         .end(function(err,res){
           res.status.should.equal(404)
